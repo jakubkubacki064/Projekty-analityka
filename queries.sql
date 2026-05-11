@@ -1,30 +1,23 @@
--- ============================================================
+
 -- PROJEKT: Analiza Kohortowa Klientów – AdventureWorks
 -- Baza:    AdventureWorks2019 (lub 2017/2016)
--- Autor:   [Twoje imię]
--- ============================================================
+-- Autor:   Jakub Kubacki
 
-
--- ============================================================
 -- KROK 1: Pierwsza data zakupu każdego klienta (definicja kohorty)
--- ============================================================
 -- Kohorta = miesiąc, w którym klient złożył PIERWSZE zamówienie.
 -- Każdy klient należy do dokładnie jednej kohorty przez cały czas.
 
 CREATE OR ALTER VIEW Sales.vw_CustomerCohort AS
 SELECT
     CustomerID,
-    -- Zaokrąglamy do pierwszego dnia miesiąca → etykieta kohorty
     DATEFROMPARTS(YEAR(MIN(OrderDate)), MONTH(MIN(OrderDate)), 1) AS CohortMonth
 FROM Sales.SalesOrderHeader
-WHERE OnlineOrderFlag = 1          -- skupiamy się na sprzedaży online
+WHERE OnlineOrderFlag = 1        
 GROUP BY CustomerID;
 GO
 
 
--- ============================================================
 -- KROK 2: Wszystkie zamówienia z numerem miesiąca od kohorty
--- ============================================================
 -- CohortIndex = 0  → miesiąc pierwszego zakupu
 -- CohortIndex = 1  → miesiąc po pierwszym zakupie itd.
 
@@ -32,25 +25,19 @@ CREATE OR ALTER VIEW Sales.vw_CohortData AS
 SELECT
     soh.CustomerID,
     cc.CohortMonth,
-    -- Ile miesięcy minęło od pierwszego zakupu?
     DATEDIFF(MONTH, cc.CohortMonth, soh.OrderDate)   AS CohortIndex,
     soh.TotalDue                                      AS OrderValue
 FROM Sales.SalesOrderHeader        soh
 JOIN Sales.vw_CustomerCohort       cc  ON soh.CustomerID = cc.CustomerID
 WHERE soh.OnlineOrderFlag = 1
-  AND soh.Status = 5;              -- tylko potwierdzone zamówienia
+AND soh.Status = 5;
 GO
 
-
--- ============================================================
 -- KROK 3: Tabela retencji – ilu klientów wraca w każdym miesiącu
--- ============================================================
-
 SELECT
     CohortMonth,
     CohortIndex,
     COUNT(DISTINCT CustomerID)                            AS ActiveCustomers,
-    -- Procent retencji względem kohorty bazowej (CohortIndex = 0)
     CAST(
         COUNT(DISTINCT CustomerID) * 100.0 /
         FIRST_VALUE(COUNT(DISTINCT CustomerID))
@@ -61,10 +48,7 @@ FROM Sales.vw_CohortData
 GROUP BY CohortMonth, CohortIndex
 ORDER BY CohortMonth, CohortIndex;
 
-
--- ============================================================
 -- KROK 4: Przychód per kohorta i miesiąc (Revenue Cohort)
--- ============================================================
 
 SELECT
     CohortMonth,
@@ -77,9 +61,7 @@ GROUP BY CohortMonth, CohortIndex
 ORDER BY CohortMonth, CohortIndex;
 
 
--- ============================================================
 -- KROK 5: Segmentacja klientów (RFM uproszczone)
--- ============================================================
 -- R = Recency   – kiedy ostatnio kupił
 -- F = Frequency – ile razy kupił
 -- M = Monetary  – ile wydał łącznie
@@ -97,7 +79,7 @@ WITH RFM AS (
 ),
 RFM_Scored AS (
     SELECT *,
-        NTILE(4) OVER (ORDER BY Recency ASC)    AS R_Score,  -- niższy recency = lepszy
+        NTILE(4) OVER (ORDER BY Recency ASC)    AS R_Score,
         NTILE(4) OVER (ORDER BY Frequency DESC) AS F_Score,
         NTILE(4) OVER (ORDER BY Monetary DESC)  AS M_Score
     FROM RFM
@@ -121,10 +103,7 @@ SELECT
 FROM RFM_Scored
 ORDER BY RFM_Total DESC;
 
-
--- ============================================================
 -- KROK 6: Miesięczny trend – nowi vs powracający klienci
--- ============================================================
 
 WITH OrderDates AS (
     SELECT
