@@ -96,9 +96,3 @@ ROW_NUMBER()   OVER (PARTITION BY CustomerID ...)    -- numer kolejnego zakupu
 NTILE(4)       OVER (ORDER BY Recency ASC)           -- kwartyle RFM
 DATEDIFF(MONTH, CohortMonth, OrderDate)              -- miesiące od dołączenia
 ```
-## 🔧 Możliwe rozszerzenia
-
-- [ ] Eksport raportu do PDF (biblioteka `reportlab` lub `fpdf`)
-- [ ] Interaktywny dashboard w **Plotly Dash**
-- [ ] Automatyczne odświeżanie danych (scheduled task)
-- [ ] Predykcja churnu (scikit-learn – Logistic Regression / Random Forest)
