@@ -1,7 +1,6 @@
-# ============================================================
+
 # PROJEKT: Analiza Kohortowa Klientów – AdventureWorks
 # Stack:   Python (pandas, pyodbc, matplotlib, seaborn)
-# ============================================================
 
 import pyodbc
 import pandas as pd
@@ -12,12 +11,10 @@ from sqlalchemy import create_engine, text
 import warnings
 warnings.filterwarnings("ignore")
 
-# ============================================================
 # 1. KONFIGURACJA POŁĄCZENIA Z BAZĄ DANYCH
-# ============================================================
 
-# --- Zmień poniższe wartości na swoje ---
-SERVER   = "localhost"            # np. "DESKTOP-ABC\\SQLEXPRESS"
+# Zmień poniższe wartości na swoje
+SERVER   = "localhost"
 DATABASE = "AdventureWorks2019"
 # Jeśli używasz Windows Authentication (najczęściej lokalnie):
 CONN_STR = (
@@ -25,16 +22,11 @@ CONN_STR = (
     f"?driver=ODBC+Driver+17+for+SQL+Server"
     f"&trusted_connection=yes"
 )
-# Jeśli używasz SQL Server Authentication:
-# CONN_STR = f"mssql+pyodbc://login:haslo@{SERVER}/{DATABASE}?driver=ODBC+Driver+17+for+SQL+Server"
 
 engine = create_engine(CONN_STR)
 print("✅ Połączono z bazą danych AdventureWorks")
 
-
-# ============================================================
 # 2. POBIERANIE DANYCH Z SQL
-# ============================================================
 
 def run_query(sql: str) -> pd.DataFrame:
     """Pomocnicza funkcja wykonująca zapytanie i zwracająca DataFrame."""
@@ -132,9 +124,7 @@ df_rfm    = run_query(sql_rfm)
 print("✅ Dane pobrane z SQL Server")
 
 
-# ============================================================
 # 3. TRANSFORMACJA DANYCH W PANDAS
-# ============================================================
 
 # -- 3a. Macierz retencji (pivot) --
 df_cohort["CohortMonth"] = pd.to_datetime(df_cohort["CohortMonth"])
@@ -159,10 +149,7 @@ print("✅ Dane przetransformowane")
 print(f"\n📊 Liczba kohort: {len(retention_matrix)}")
 print(f"📊 Segmenty RFM:\n{df_rfm.to_string(index=False)}")
 
-
-# ============================================================
 # 4. WIZUALIZACJE
-# ============================================================
 
 fig, axes = plt.subplots(2, 2, figsize=(18, 13))
 fig.patch.set_facecolor("#0f1117")
@@ -275,20 +262,14 @@ plt.savefig("cohort_analysis/cohort_dashboard.png",
 plt.show()
 print("✅ Dashboard zapisany: cohort_analysis/cohort_dashboard.png")
 
-
-# ============================================================
 # 5. EKSPORT WYNIKÓW DO CSV (do portfolio / dokumentacji)
-# ============================================================
 
 retention_matrix.to_csv("cohort_analysis/retention_matrix.csv")
 df_trend.to_csv("cohort_analysis/trend_new_vs_returning.csv", index=False)
 df_rfm.to_csv("cohort_analysis/rfm_segments.csv", index=False)
 print("✅ Wyniki zapisane do plików CSV")
 
-
-# ============================================================
 # 6. PODSUMOWANIE TEKSTOWE
-# ============================================================
 
 best_cohort  = cohort_size.idxmax()
 worst_cohort = cohort_size.idxmin()
