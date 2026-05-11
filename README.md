@@ -96,20 +96,6 @@ ROW_NUMBER()   OVER (PARTITION BY CustomerID ...)    -- numer kolejnego zakupu
 NTILE(4)       OVER (ORDER BY Recency ASC)           -- kwartyle RFM
 DATEDIFF(MONTH, CohortMonth, OrderDate)              -- miesiące od dołączenia
 ```
-
----
-
-## 💼 Co pokazuje ten projekt rekruterowi
-
-- Umiejętność łączenia **Pythona z SQL Serverem** (pyodbc + SQLAlchemy)
-- Znajomość **zaawansowanych zapytań T-SQL** (CTE, funkcje okienkowe)
-- Praca z **realną bazą danych** (AdventureWorks)
-- Tworzenie **business insights** z surowych danych transakcyjnych
-- Budowanie **dashboardów** (matplotlib + seaborn)
-- Znajomość metod analitycznych: **cohort analysis + RFM**
-
----
-
 ## 🔧 Możliwe rozszerzenia
 
 - [ ] Eksport raportu do PDF (biblioteka `reportlab` lub `fpdf`)
