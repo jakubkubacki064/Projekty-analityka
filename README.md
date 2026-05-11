@@ -1,4 +1,4 @@
-# 📊 Analiza Kohortowa Klientów – AdventureWorks
+# 📊 1. Analiza Kohortowa Klientów – AdventureWorks
 
 > **Stack:** Python · pandas · pyodbc · seaborn · SQL Server / T-SQL  
 > **Baza danych:** AdventureWorks2019  
@@ -99,7 +99,7 @@ DATEDIFF(MONTH, CohortMonth, OrderDate)              -- miesiące od dołączeni
 
 
 
-# 📈 Prognozowanie Popytu – Demand Forecasting
+# 📈 2. Prognozowanie Popytu – Demand Forecasting
 
 > Projekt portfolio | Analityka Danych w Biznesie
 
